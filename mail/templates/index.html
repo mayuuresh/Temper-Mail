@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Temporary Email and Inbox</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}" />
+    <script>
+      const now = new Date();
+      const hour = now.getHours();
+      const minute = now.getMinutes();
+
+      const copyText = document.getElementById("copy-text");
+
+      copyText.addEventListener("click", () => {
+        navigator.clipboard
+          .writeText(copyText.textContent)
+          .then(() => {
+            console.log("Text copied to clipboard");
+            // Optional: Add visual feedback, like a "Copied!" message
+          })
+          .catch((err) => {
+            console.error("Failed to copy text:", err);
+          });
+      });
+    </script>
+    <style>
+      /* General Styles for Dark Theme */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #000000; /* Dark background */
+        color: #e0e0e0; /* Light text */
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      /* Heading Styles */
+      h1 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        color: #ff9000; /* Purple accent color */
+      }
+
+      /* Button Styles */
+      button {
+        background-color: #ff9000; /* Purple */
+        color: #121212; /* Dark text on buttons */
+        border: none;
+        border-radius: 5px;
+        padding: 10px 20px;
+        font-size: 1em;
+        cursor: pointer;
+        transition: background-color 0.3s, transform 0.2s;
+      }
+
+      /* Button Hover Animation */
+      button:hover {
+        background-color: #9c47ff; /* Darker purple */
+        transform: scale(1.05);
+      }
+
+      /* Email Display Styles */
+      #generated-email {
+        font-size: 1.2em;
+        margin: 20px 0;
+      }
+
+      /* Inbox Section Styles */
+      #inbox-section {
+        margin-top: 30px;
+        width: 100%;
+        max-width: 800px;
+        border: 3px solid #131212;
+        border-radius: 5px;
+        padding: 20px;
+        background-color: #1e1e1e; /* Dark container background */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Shadow effect */
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeIn 0.5s forwards;
+      }
+
+      /* Table Styles */
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      div {
+        background-color: #000000;
+      }
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #444; /* Darker table border */
+      }
+
+      th {
+        background-color: #ff9000; /* Purple header */
+        color: #121212; /* Dark text in header */
+      }
+
+      td {
+        color: #e0e0e0; /* Light text in table cells */
+      }
+
+      /* Animation for fading in the inbox section */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Refresh button styles */
+      #refresh-inbox-btn {
+        margin-top: 20px;
+        background-color: #ff9000;
+        color: #121212;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .scrollable-cell {
+        max-height: 150px;
+        overflow-y: auto;
+        word-wrap: break-word;
+        padding: 10px;
+        border: 1px solid #444; /* Darker border */
+        background-color: #2b2b2b; /* Dark background for scrollable cells */
+        color: #e0e0e0; /* Light text for scrollable cells */
+      }
+
+      .copy-text1:hover {
+        background-color: #3e3e3e; /* Hover effect for copy text */
+      }
+      .copy-text {
+        font-size: 20px;
+        cursor: pointer;
+        padding: 10px;
+        display: inline-block;
+        border: 1px solid #444;
+        background-color: #2b2b2b; /* Dark background for copy text */
+        color: #ff9000; /* Purple text */
+        transition: background-color 0.3s;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center; /* Align text to center */
+      }
+    </style>
+  </head>
+  <body style="background-color: #000000">
+    <div
+      style="
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #000000;
+      ">
+      <h1>
+        <span style="color: #ff9000">Temporary E</span
+        ><span style="color: #ffff">mail Service</span>
+      </h1>
+
+      <form action="/generate_mail" method="get">
+        <button type="submit" id="generate-email-btn">
+          Generate Temporary Email
+        </button>
+        <br />
+        <br />
+      </form>
+
+      {% if email %}
+    </div>
+    <div
+      id="inbox-section"
+      style="
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        background-color: #000000;
+      ">
+      <h2 id="copy-text">
+        Inbox Messages for
+        <span id="text-to-copy" class="copy-text">{{ email }}</span>
+      </h2>
+
+      <table id="inbox-messages-table" style="align-content: center">
+        <thead>
+          <tr>
+            <th>From</th>
+            <th>Subject</th>
+            <th>Message</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody id="inbox-messages">
+          {% if inbox_messages %} {% for message1 in inbox_messages %}
+          <tr>
+            <td>{{ From }}</td>
+            <td>{{ message1.subject }}</td>
+            <td style="max-width: 400px; vertical-align: top">
+              <div
+                style="
+                  max-height: 150px;
+                  overflow-y: scroll;
+                  word-wrap: break-word;
+                  padding: 10px;
+                  background-color: #000000;
+                  color: #e0e0e0;
+                ">
+                {{ message1.message.body | safe }}
+              </div>
+            </td>
+            <td>{{current_time }}</td>
+          </tr>
+          {% endfor %} {% else %}
+          <tr>
+            <td colspan="3">No new messages.</td>
+          </tr>
+          {% endif %}
+        </tbody>
+      </table>
+      <form action="/inbox" method="get">
+        <input type="hidden" name="email" value="{{ email }}" />
+        <button type="submit" id="refresh-inbox-btn">Refresh Inbox</button>
+      </form>
+    </div>
+    {% endif %}
+  </body>
+  <script>
+    const textToCopy = document.getElementById("text-to-copy");
+    const copiedNotification = document.createElement("div");
+    copiedNotification.className = "hidden";
+    document.body.appendChild(copiedNotification);
+
+    textToCopy.addEventListener("click", () => {
+      navigator.clipboard
+        .writeText(textToCopy.textContent)
+        .then(() => {
+          copiedNotification.textContent = "Copied!";
+          copiedNotification.classList.remove("hidden");
+          copiedNotification.classList.add("show");
+
+          setTimeout(() => {
+            copiedNotification.classList.remove("show");
+            copiedNotification.classList.add("hidden");
+          }, 1500);
+        })
+        .catch((err) => {
+          console.error("Failed to copy text:", err);
+        });
+    });
+  </script>
+</html>
